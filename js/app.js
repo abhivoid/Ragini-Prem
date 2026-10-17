@@ -43,41 +43,44 @@
     });
   }
 
-  /* ---------- date logic: before / on the day / after (India time) ---------- */
+  /* ---------- date logic: days -> hours (last 24 h) -> today -> after (India time) ---------- */
   var target = new Date('2026-11-20T07:00:00+05:30').getTime(), dayEnd = new Date('2026-11-21T00:00:00+05:30').getTime();
-  var live = $('live'), nd = $('nd');
-  function phase() { var n = Date.now(); return n < target ? 0 : n < dayEnd ? 1 : 2; }
-  var ph = phase();
-  if (ph === 0) nd.dataset.count = Math.floor((target - Date.now()) / 864e5); else nd.style.display = 'none';
-  if (ph === 1) { $('cl').textContent = 'Today'; $('cs').textContent = Date.now() < target ? 'The wedding begins at 7:00 AM' : 'The wedding is being celebrated today'; }
-  if (ph === 2) { $('cl').textContent = 'With your blessings'; $('cs').textContent = 'We were married on 20 November 2026'; $('bye').textContent = 'Thank you for your blessings.'; }
-  [].forEach.call(document.querySelectorAll('[data-count]'), build);
-  function tick() {
-    if (phase() !== 0) { live.textContent = ''; return; }
-    var d = target - Date.now(), H = Math.floor(d % 864e5 / 36e5), M = Math.floor(d % 36e5 / 6e4), S = Math.floor(d % 6e4 / 1e3);
-    live.textContent = H + ' hours ' + M + ' minutes ' + S + ' seconds';
+  var nd = $('nd'), last = '';
+  function countdown() {
+    var n = Date.now(), d = target - n, mode, val = 0, cl_ = 'Until the muhurat', cs = '', bye = 'We look forward to celebrating with you.';
+    if (d >= 864e5) { mode = 'd'; val = Math.floor(d / 864e5); cs = (val === 1 ? 'day' : 'days') + ' until sunrise on 20 November'; }
+    else if (d >= 36e5) { mode = 'h'; val = Math.floor(d / 36e5); cs = (val === 1 ? 'hour' : 'hours') + ' until sunrise on 20 November'; }
+    else if (d > 0) { mode = 's'; cl_ = 'Almost time'; cs = 'The wedding begins at 7:00 AM'; }
+    else if (n < dayEnd) { mode = 't'; cl_ = 'Today'; cs = 'The wedding is being celebrated today'; }
+    else { mode = 'p'; cl_ = 'With your blessings'; cs = 'We were married on 20 November 2026'; bye = 'Thank you for your blessings.'; }
+    var key = mode + val;
+    if (key === last) return;
+    last = key;
+    $('cl').textContent = cl_; $('cs').textContent = cs; $('bye').textContent = bye;
+    if (mode === 'd' || mode === 'h') { nd.style.display = ''; nd.dataset.count = val; build(nd); } else nd.style.display = 'none';
   }
-  tick(); setInterval(tick, 1000);
+  [].forEach.call(document.querySelectorAll('[data-count]'), build);
+  countdown(); setInterval(countdown, 30000);
 
   /* ---------- pager ---------- */
   var col = $('col'), nx = $('next'), nl = $('nl'), db = [].slice.call($('dots').children),
-      secs = [null, $('s1'), $('s2'), $('s3'), $('s4'), $('s5')], bgs = { a: $('bgA'), b: $('bgB'), c: $('bgC') };
+      secs = [null, $('s1'), $('s2'), $('s3'), $('s4')], bgs = { a: $('bgA'), b: $('bgB'), c: $('bgC') }, LAST = 4;
   var idx = 0, busy = false, lock = 0;
-  function sceneOf(i) { return i <= 1 ? 'a' : i <= 4 ? 'b' : 'c'; }
+  function sceneOf(i) { return i <= 1 ? 'a' : i <= 3 ? 'c' : 'b'; }
   function reset(s, up) { s.style.transition = 'none'; s.classList.toggle('up', up); void s.offsetWidth; s.style.transition = ''; }
   function enter(i, dir) { var s = secs[i]; reset(s, dir < 0); s.classList.remove('up'); s.classList.add('in'); count(s); }
   function leave(i, dir) { var s = secs[i]; s.classList.remove('in', 'drag'); s.style.opacity = ''; s.style.transform = ''; if (dir > 0) s.classList.add('up'); }
   function ui() {
     var sc = sceneOf(Math.max(idx, 1));
     col.dataset.sc = sc;
-    Object.keys(bgs).forEach(function (k) { bgs[k].classList.toggle('on', k === sc); });
+    Object.keys(bgs).forEach(function (k) { if (bgs[k]) bgs[k].classList.toggle('on', k === sc); });
     col.classList.toggle('opened', idx >= 1);
     db.forEach(function (b, k) { b.className = (k + 1 === idx) ? 'a' : ''; });
-    nx.classList.toggle('rev', idx === 5); nl.textContent = idx === 5 ? 'Start over' : 'Next';
+    nx.classList.toggle('rev', idx === LAST); nl.textContent = idx === LAST ? 'Start over' : 'Next';
   }
   function burst() {
     var fx = $('fx'), cols = ['#C8742A', '#E9B04A', '#E08A2E', '#F4D27A', '#B33A2B'], k, p, a, r, z;
-    for (k = 0; k < 30; k++) {
+    for (k = 0; k < 18; k++) {
       p = document.createElement('i'); p.className = 'pet'; a = Math.random() * Math.PI * 2; r = 90 + Math.random() * 190; z = 8 + Math.random() * 8;
       p.style.cssText = 'width:' + z + 'px;height:' + z * 1.3 + 'px;background:' + cols[k % 5] + ';--dx:' + (Math.cos(a) * r).toFixed(0) + 'px;--dy:' + (Math.sin(a) * r * .7 + 200 + Math.random() * 160).toFixed(0) + 'px;--r:' + (Math.random() * 720 - 360).toFixed(0) + 'deg;--d:' + (2.6 + Math.random() * 1.6).toFixed(2) + 's;animation-delay:' + (Math.random() * .5).toFixed(2) + 's';
       fx.appendChild(p);
@@ -93,9 +96,10 @@
 
   function open() {
     if (busy || idx !== 0) return;
-    busy = true; idx = 1; ui(); startMusic(); burst();
-    setTimeout(function () { enter(1, 1); }, 800);
-    setTimeout(function () { busy = false; }, 1600);
+    busy = true; idx = 1; ui(); startMusic();
+    setTimeout(burst, 350);
+    setTimeout(function () { enter(1, 1); }, 650);
+    setTimeout(function () { busy = false; }, 1500);
   }
   function close() {
     if (busy) return;
@@ -103,7 +107,7 @@
     setTimeout(function () { busy = false; }, 1600);
   }
   function go(n) {
-    if (busy || n < 0 || n > 5 || n === idx) return;
+    if (busy || n < 0 || n > LAST || n === idx) return;
     if (idx === 0) { if (n >= 1) open(); return; }
     if (n === 0) { close(); return; }
     busy = true;
@@ -112,7 +116,7 @@
     setTimeout(function () { enter(n, dir); }, 360);
     setTimeout(function () { busy = false; }, 1100);
   }
-  function next() { go(idx === 5 ? 1 : idx + 1); }
+  function next() { go(idx === LAST ? 0 : idx + 1); }
 
   $('otap').addEventListener('click', open);
   $('open').addEventListener('click', function () { if (idx === 0) open(); });
@@ -120,14 +124,14 @@
   db.forEach(function (b, k) { b.addEventListener('click', function () { go(k + 1); }); });
   addEventListener('keydown', function (e) {
     var k = e.key;
-    if (k === 'ArrowDown' || k === 'PageDown' || k === ' ' || (k === 'Enter' && idx === 0)) { e.preventDefault(); if (idx < 5) go(idx + 1); }
+    if (k === 'ArrowDown' || k === 'PageDown' || k === ' ' || (k === 'Enter' && idx === 0)) { e.preventDefault(); if (idx < LAST) go(idx + 1); }
     else if (k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); go(idx - 1); }
   });
   addEventListener('wheel', function (e) {
     e.preventDefault();
     if (busy || Date.now() < lock || Math.abs(e.deltaY) < 8) return;
     lock = Date.now() + 1200;
-    if (e.deltaY > 0) { if (idx < 5) go(idx + 1); } else go(idx - 1);
+    if (e.deltaY > 0) { if (idx < LAST) go(idx + 1); } else go(idx - 1);
   }, { passive: false });
   var y0 = 0, t0 = 0, dy = 0, drag = false;
   addEventListener('touchstart', function (e) { y0 = e.touches[0].clientY; t0 = performance.now(); dy = 0; drag = !busy; }, { passive: true });
@@ -146,9 +150,9 @@
     var v = end / Math.max(1, performance.now() - t0), fwd = end < -50 || v < -.45, back = end > 50 || v > .45;
     if (idx === 0) { if (fwd) open(); return; }
     var s = secs[idx]; s.classList.remove('drag'); s.style.opacity = ''; s.style.transform = '';
-    if (fwd && idx < 5) go(idx + 1); else if (back) go(idx - 1);
+    if (fwd && idx < LAST) go(idx + 1); else if (back) go(idx - 1);
   });
   addEventListener('resize', function () { if (innerWidth !== lastW) { lastW = innerWidth; setVh(); } else if (useJsVh) setVh(); });
-  ['opening', 'scene-blessing', 'scene-sunrise', 'scene-celebrate'].forEach(function (n) { new Image().src = 'assets/scenes/' + n + '.webp'; });
+  ['opening', 'scene-blessing', 'scene-celebrate', 'scene-sunrise'].forEach(function (n) { var im = new Image(); im.src = 'assets/scenes/' + n + '.webp'; if (im.decode) im.decode().catch(function () {}); });
   ui();
 })();

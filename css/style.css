@@ -20,7 +20,7 @@ p{margin:0}
 .area{position:absolute;z-index:3;perspective:900px}
 .area.a{left:calc(var(--u)*6);right:calc(var(--u)*38);top:calc(var(--vh)*8);bottom:calc(var(--ih)*.24)}
 .area.b{left:calc(var(--u)*8);right:calc(var(--u)*8);top:calc(var(--vh)*8);bottom:calc(var(--ih)*.5)}
-.area.c{left:calc(var(--u)*8);right:calc(var(--u)*8);top:calc(100% - var(--ih)*.84);bottom:calc(var(--ih)*.56)}
+.area.c{left:calc(var(--u)*8);right:calc(var(--u)*8);top:calc(100% - var(--ih)*.88);bottom:calc(var(--ih)*.55)}
 .sc{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(24px);transition:opacity .4s ease,transform .6s var(--e),visibility 0s .6s}
 .sc.up{transform:translateY(-24px)}
 .sc.in{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .6s ease,transform .8s var(--e),visibility 0s}
@@ -40,7 +40,6 @@ h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:min(
 .sub,.sub2{max-width:16em;text-wrap:balance;font:400 min(4.2vw,calc(var(--vh)*2))/1.6 Jost,sans-serif;color:var(--mute);margin-top:min(calc(var(--vh)*.8),6px)}
 .sub2{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:min(6vw,calc(var(--vh)*2.9));color:var(--ink)}
 .mo{font:500 min(3.2vw,calc(var(--vh)*1.6))/1.6 Jost,sans-serif;letter-spacing:.3em;text-transform:uppercase;margin-top:min(calc(var(--vh)*.8),6px);color:var(--ink)}
-.live{font:400 min(3.8vw,calc(var(--vh)*1.8))/1.6 Jost,sans-serif;color:var(--lab);margin-top:min(calc(var(--vh)*1),8px);font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .rule{width:calc(var(--u)*16);height:1px;background:var(--ink);opacity:.6;margin:min(calc(var(--vh)*1.8),14px) auto;position:relative}
 .rule::after{content:"";position:absolute;left:50%;top:-3px;width:6px;height:6px;margin-left:-3px;background:transparent;border:1px solid var(--ink);transform:rotate(45deg)}
 .num{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:min(28vw,calc(var(--vh)*13));line-height:1;font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;color:var(--ink);display:flex;justify-content:center;margin:min(calc(var(--vh)*.4),3px) 0 0}

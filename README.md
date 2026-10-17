@@ -17,16 +17,18 @@ Static website. No build step, no server code. Works on any static host.
 4. After a minute your invite is live at `https://<your-username>.github.io/<repo-name>/`. Share that link.
 Tip: if you change an image, rename it (or add `?v=2` to its name in the CSS) so phones do not show the old cached copy.
 
-## Which painting is used where
-- Opening: `opening.webp` (couple's feet)
-- Page 1, blessings and names: `scene-blessing.webp`
-- Pages 2 to 4, save the date / the wedding / countdown: `scene-sunrise.webp`
-- Page 5, closing: `scene-celebrate.webp`
-To use higher-resolution paintings, replace the files with the same names (portrait, ratio 9:16 or similar; 1170 x 2080 px is ideal for sharp phones).
+## Page flow and which painting is used where
+1. Cover: `opening.webp` (couple's feet), tap to open
+2. Page 1, "With divine blessings" and the names: `scene-blessing.webp`
+3. Page 2, save the date: `scene-celebrate.webp`
+4. Page 3, the wedding (Dharmapuri, 7:00 AM, See location): `scene-celebrate.webp`
+5. Page 4 (last), countdown + "We look forward to celebrating with you.": `scene-sunrise.webp`
+"Start over" on the last page returns to the cover.
+To use higher-resolution paintings, replace the files with the same names (portrait, about 9:16; 1170 x 2080 px is ideal).
 
 ## Things to know
 - The paintings carry a small white sparkle mark in the bottom-right corner (added by the image tool). It is left untouched.
-- The date logic is automatic (India time): before the wedding it shows the countdown, on the day it says "Today", afterwards it thanks guests.
+- The countdown is automatic (India time): it shows days, switches to hours in the last 24 hours, says "Today" on the wedding day and thanks guests afterwards.
 - Venue / time / map link: `index.html`, section `s3`.
 
 ## Background music (optional)
