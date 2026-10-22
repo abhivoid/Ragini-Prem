@@ -17,7 +17,7 @@ p{margin:0}
 #bgB{background-image:url(../assets/scenes/scene-sunrise.webp)}
 #bgC{background-image:url(../assets/scenes/scene-celebrate.webp)}
 /* text areas, placed in the empty part of each painting */
-.area{position:absolute;z-index:3;perspective:900px}
+.area{position:absolute;z-index:3;perspective:900px;pointer-events:none}
 .area.a{left:calc(var(--u)*6);right:calc(var(--u)*38);top:calc(var(--vh)*8);bottom:calc(var(--ih)*.24)}
 .area.b{left:calc(var(--u)*8);right:calc(var(--u)*8);top:calc(var(--vh)*8);bottom:calc(var(--ih)*.5)}
 .area.c{left:calc(var(--u)*8);right:calc(var(--u)*8);top:calc(100% - var(--ih)*.88);bottom:calc(var(--ih)*.55)}
